@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Générateur de Nuage de mots</h2>
+
+<form method="POST" action="{{ url_for('wordcloud') }}">
+    <div style="display: flex; gap: 20px;">
+        <div style="flex: 1;">
+            <label for="days">Intervalle de temps (derniers jours) :</label>
+            <input type="number" id="days" name="days" value="{{ days }}" min="1" required>
+        </div>
+        <div style="flex: 1;">
+            <label for="num_words">Nombre max de mots (les plus fréquents) :</label>
+            <input type="number" id="num_words" name="num_words" value="{{ num_words }}" min="10" max="200" required>
+        </div>
+    </div>
+    <button type="submit">Générer le nuage de mots en SVG</button>
+</form>
+
+{% if svg_content %}
+    <div class="svg-container">
+        <!-- SVG content is directly injected and natively rendered -->
+        {{ svg_content | safe }}
+    </div>
+    <div style="text-align: center; margin-top: 15px;">
+        <button onclick="downloadSVG()">Télécharger en SVG</button>
+    </div>
+{% endif %}
+{% endblock %}
