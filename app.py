@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from bson.objectid import ObjectId
-
+from pymongo.errors import DuplicateKeyError
 from db import db, sources_collection, articles_collection
 from utils.scraper import fetch_and_parse_sitemap
 from utils.wordcloud import generate_svg_wordcloud
@@ -17,11 +17,26 @@ def scrape_all_sources():
     if sources_collection is None:
         return
     sources = list(sources_collection.find())
-    for source in sources:
-        print(f"[{datetime.now()}] Automatisation : Scraping de {source['journal_name']}")
-        fetch_and_parse_sitemap(source['url'], source['journal_name'])
+    current= datetime.now()
 
-scheduler.add_job(func=scrape_all_sources, trigger="interval", hours=1)
+    for source in sources:
+
+        interval_hours= source.get('update_interval', 1)
+        latest_update = source.get('latest_update', datetime.min)
+
+        if current >= latest_update + timedelta(hours = interval_hours):
+            print(f"[{current}] Automatisation : Scraping de {source['journal_name']} (avec l'intervalle de: {interval_hours} heures)")
+            fetch_and_parse_sitemap(source['url'], source['journal_name'])
+            
+            sources_collection.update_one(
+                {"_id": source["_id"]},
+                {"$set": {"latest_update": current}}
+            )
+        else:
+            print(f"[{current}] Saut de {source['journal_name']} (pas encore à jour, prochain scrap dans quelques heures)")
+
+
+scheduler.add_job(func=scrape_all_sources, trigger="interval", minutes=20)
 scheduler.start()
 
 @app.route('/')
@@ -68,7 +83,7 @@ def track_click(article_id):
         return jsonify({"status": "error", "message": str(e)}), 400
 
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET'])
 def admin():
     sources = list(sources_collection.find()) if sources_collection is not None else []
     return render_template('admin.html', sources=sources)
@@ -91,7 +106,12 @@ def add_source():
                 })
                 flash(f"Source ajoutée avec succès ! {result['message']}", "success")
             else:
-                flash(f"Impossible d'ajouter la source (Erreur lors du scraping) : {result['message']}", "error")
+                print("Détails de l'erreur lors du scalping:" , result.get('message'))
+                flash(f"Impossible d'ajouter la source", "error")
+        
+        except DuplicateKeyError:
+            flash(f"Cette source existe déja","warning")
+
                 
         except Exception as e:
             flash(f"Erreur technique : {e}", "error")

@@ -1,5 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="messages">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
 <h2>Administration des sources</h2>
 
 <form method="POST" action="{{ url_for('add_source') }}">
@@ -16,6 +29,7 @@
 </form>
 
 <h3>Sources actives</h3>
+
 {% if sources %}
     <table>
         <thead>

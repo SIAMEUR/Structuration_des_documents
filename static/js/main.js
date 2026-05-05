@@ -1,12 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Interception des clics sur les liens d'articles
     const articleLinks = document.querySelectorAll(".track-click");
     
     articleLinks.forEach(link => {
         link.addEventListener("click", function(e) {
             const articleId = this.getAttribute("data-id");
             
-            // Appel AJAX vers le backend pour incrémenter le compteur / date
+            // Ici on appel le backend pour incrémenter le compteur de clics
             fetch(`/track_click/${articleId}`, {
                 method: "POST"
             })
@@ -24,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-// Fonction pour télécharger un SVG natif
 function downloadSVG() {
     const svgElement = document.querySelector(".svg-container svg");
     if (!svgElement) return;
@@ -32,7 +30,6 @@ function downloadSVG() {
     const serializer = new XMLSerializer();
     let source = serializer.serializeToString(svgElement);
 
-    // Ajout des namespaces si manquant
     if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
         source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
     }

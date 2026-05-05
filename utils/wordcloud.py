@@ -35,7 +35,8 @@ def generate_svg_wordcloud(titles, num_words=50):
         f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg" style="background-color:#ffffff; border: 1px solid #e0e0e0; border-radius: 8px;">'
     ]
     
-    colors = ['#2c3e50', '#e74c3c', '#27ae60', '#2980b9', '#8e44ad', '#f39c12', '#d35400', '#16a085', '#34495e']
+    colors = [ '#2c3e50', '#e74c3c', '#27ae60', '#2980b9', '#8e44ad', '#f39c12', '#d35400', 
+        '#16a085', '#34495e', '#c0392b', '#1abc9c', '#3498db', '#9b59b6', '#f1c40f', '#e67e22', '#2ecc71', '#16a085', '#273c75', '#44bd32', '#8c7ae6']
     
     for word, count in word_counts:
         font_size = max(14, int(60 * (count / max_count)))
@@ -47,5 +48,4 @@ def generate_svg_wordcloud(titles, num_words=50):
         svg_elements.append(text_element)
         
     svg_elements.append('</svg>')
-    
     return "\n".join(svg_elements)

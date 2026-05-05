@@ -19,7 +19,7 @@ def fetch_and_parse_sitemap(source_url, source_name):
         root = ET.fromstring(response.content)
         articles_added = 0
         
-        # Parcourir chaque balise <url>
+        # on parcour chaque balise <url>
         for url_node in root.findall('sm:url', NAMESPACES) or root.findall('{http://www.sitemaps.org/schemas/sitemap/0.9}url'):
             
             loc_node = url_node.find('sm:loc', NAMESPACES) or url_node.find('{http://www.sitemaps.org/schemas/sitemap/0.9}loc')
