@@ -6,6 +6,11 @@
     <input type="text" name="q" placeholder="Rechercher par titre, journal ou mot-clé..." value="{{ query|default('') }}">
     <button type="submit">Rechercher</button>
 </form>
+<form method="GET" action="{{ url_for('index') }}" class="search-bar">
+    <label for="date_clic">Consultés le :</label>
+    <input type="date" id="date_clic" name="date_clic" required>
+    <button type="submit">Filtrer</button>
+</form>
 
 {% if query and not grouped %}
     <h3>Résultats de recherche pour "{{ query }}" ({{ articles|length }} résultats)</h3>
@@ -33,25 +38,43 @@
 
 {% elif grouped %}
     {% if grouped_data %}
-        {% for group in grouped_data %}
-            <h3>Journal : {{ group._id }}</h3>
-            <ul class="article-list">
-            {% for article in group.articles %}
-                <li>
-                    <a href="{{ article.link }}" target="_blank" class="track-click" data-id="{{ article._id }}">{{ article.title }}</a>
-                    <div class="article-meta">
-                        Publié le : {{ article.pub_date.strftime('%Y-%m-%d %H:%M') if article.pub_date else 'N/A' }}
-                        {% if article.keywords %}
-                            <br>
-                            {% for kw in article.keywords %}
-                                <span class="keywords">{{ kw }}</span>
-                            {% endfor %}
-                        {% endif %}
+        <div class="journal-columns-container">
+            
+            {% for group in grouped_data %}
+                <article class="journal-column">
+                    
+                    <div class="journal-header">
+                        <h3>{{ group._id }}</h3>
                     </div>
-                </li>
+
+                    <ul class="article-list">
+                        {% for article in group.articles %}
+                            <li class="article-item">
+                                <div class="article-content">
+                                    <a href="{{ article.link }}" 
+                                       target="_blank" 
+                                       class="track-click" 
+                                       data-id="{{ article._id }}">
+                                        {{ article.title }}
+                                    </a>
+                                    
+{% if article.image_url %}
+                <img src="{{ article.image_url }}"">
+            {% else %}
+                <span class="picto">🖼️</span>
+            {% endif %}                                </div>
+
+                                <div class="article-meta">
+                                    Publié le : {{ article.pub_date.strftime('%Y-%m-%d %H:%M') if article.pub_date else 'N/A' }}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                </article>
             {% endfor %}
-            </ul>
-        {% endfor %}
+
+        </div>
     {% else %}
         <p>Aucun article disponible. Veuillez ajouter une source dans la page d'administration.</p>
     {% endif %}

@@ -26,6 +26,21 @@
         required
       />
     </div>
+
+
+    <div style="flex: 1">
+      <label for="source">Source d'actualité :</label>
+      <select name="source" id="source" style="width: 100%; padding: 5px;">
+    <option value="all" {% if selected_source == 'all' %}selected{% endif %}>Toutes les sources</option>
+    {% for s in sources %}
+      <option value="{{ s.journal_name }}" {% if selected_source == s.journal_name %}selected{% endif %}>
+          {{ s.journal_name }}
+      </option>
+    {% endfor %}
+</select>
+    </div>
+
+    
   </div>
   <button type="submit">Générer le nuage de mots en SVG</button>
 </form>

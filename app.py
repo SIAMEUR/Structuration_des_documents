@@ -41,47 +41,63 @@ scheduler.start()
 
 @app.route('/')
 def index():
-    query = request.args.get('q', '')
-    
-    if query:
 
-        regex_query = {"$regex": query, "$options": "i"}
-        articles = list(articles_collection.find({
-            "$or": [
-                {"title": regex_query},
-                {"source": regex_query},
-                {"keywords": regex_query}
-            ]
-        }).sort("pub_date", -1))
-        
-        return render_template('index.html', articles=articles, query=query, grouped=False)
+    query = request.args.get('q', '')
+    date_query= request.args.get('date_clic')
+
+    
+    filter = {}
+
+    if date_query:
+        dt = datetime.strptime(date_query, "%Y-%m-%d")
+        start = datetime.combine(dt, datetime.min.time())
+        end = datetime.combine(dt, datetime.max.time())
+
+        filter = {"consultation_dates": {"$elemMatch": {"$gte": start, "$lte": end}}}
+
+
+
+    elif query:
+        regex = {"$regex": query, "$options": "i"}
+        filter = {"$or": [
+                {"title": regex},
+                {"source": regex},
+                {"keywords": regex}
+                 ]
+        }
+
     else:
-        pipeline = [
-            {"$sort": {"pub_date": -1}},
-            {
-                "$group": {
-                    "_id": "$source",
-                    "articles": {"$push": "$$ROOT"}
-                }
-            },
-            {"$sort": {"_id": 1}}
-        ]
-        
-        grouped_data = list(articles_collection.aggregate(pipeline)) if articles_collection is not None else []
-        return render_template('index.html', grouped_data=grouped_data, grouped=True)
+        limit = datetime.now() - timedelta(days=3)
+        filter = {"pub_date": {"$gte": limit}} 
+
+    req = [
+        {"$match": filter}, {"$sort": {"pub_date": -1}}, {"$group": { "_id": "$source","articles": {"$push": "$$ROOT"}
+                    }},
+    {"$sort": {"_id": 1}}              
+    ]
+    
+    res = list(articles_collection.aggregate(req)) if articles_collection is not None else []
+    return render_template('index.html', grouped_data=res, query=query or date_query, grouped=True)
 
 @app.route('/track_click/<article_id>', methods=['POST'])
 def track_click(article_id):
-    """ Enregistre la date de consultation lorsqu'un utilisateur clique sur un lien """
     try:
-        articles_collection.update_one(
+        res = articles_collection.update_one(
             {"_id": ObjectId(article_id)},
             {"$push": {"consultation_dates": datetime.now()}}
         )
-        return jsonify({"status": "success"})
+        
+        if res.modified_count == 0:
+            res = articles_collection.update_one(
+                {"_id": article_id},
+                {"$push": {"consultation_dates": datetime.now()}}
+            )
+            
+        print(f"Résultat pour {article_id} : {res.modified_count} modifié(s)")
+        return jsonify({"status": "success", "modified": res.modified_count})
     except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 400
-
+        print(f"Erreur : {e}")
+        return jsonify({"status": "error"}), 400
 
 @app.route('/admin', methods=['GET'])
 def admin():
@@ -136,6 +152,11 @@ def delete_source(source_id):
 
 @app.route('/wordcloud', methods=['GET', 'POST'])
 def wordcloud():
+
+    sources = list(sources_collection.find())
+    sourceSelect = "all"
+
+
     svg_content = None
     num_words = 50
     days = 7
@@ -143,18 +164,24 @@ def wordcloud():
     if request.method == 'POST':
         num_words = int(request.form.get('num_words', 50))
         days = int(request.form.get('days', 7))
+        sourceSelect = request.form.get('source', 'all')
         
         date_limit = datetime.now() - timedelta(days=days)
+
+        query = {"pub_date": {"$gte": date_limit}}
+
         
-        articles = list(articles_collection.find(
-            {"pub_date": {"$gte": date_limit}},
-            {"title": 1, "_id": 0}
-        ))
+        if sourceSelect and sourceSelect != "all":
+            query["source"] = sourceSelect
+
+        
+        articles = list(articles_collection.find(query).sort("pub_date", -1))
         
         titles = [a['title'] for a in articles]
         svg_content = generate_svg_wordcloud(titles, num_words)
         
-    return render_template('wordcloud.html', svg_content=svg_content, num_words=num_words, days=days)
+    return render_template('wordcloud.html', svg_content=svg_content,
+            num_words=num_words, days=days, sources=sources, selected_source=sourceSelect)
 
 
 if __name__ == '__main__':

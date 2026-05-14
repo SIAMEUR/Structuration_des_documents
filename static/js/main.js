@@ -44,3 +44,6 @@ function downloadSVG() {
     downloadLink.click();
     document.body.removeChild(downloadLink);
 }
+
+
+

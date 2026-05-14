@@ -9,7 +9,11 @@ STOP_WORDS = set([
     "qui", "que", "quoi", "dont", "où", "il", "elle", "ils", "elles", "on", "nous", "vous",
     "je", "tu", "me", "te", "se", "ne", "pas", "plus", "moins", "très", "trop", "est", "sont",
     "a", "ont", "être", "avoir", "fait", "faire", "comme", "tout", "tous", "toute", "toutes",
-    "mais", "donc", "or", "ni", "car", "y", "c", "s", "n", "m", "t", "qu"
+    "mais", "donc", "or", "ni", "car", "y", "c", "s", "n", "m", "t", "qu","the", "and", "for", "with", "from", "that", "this", "these", "those", "have", "has",
+    "had", "been", "was", "were", "are", "his", "her", "their", "your", "our", "about",
+    "who", "which", "what", "where", "when", "how", "why", "all", "any", "both", "each",
+    "few", "more", "most", "some", "such", "than", "too", "very", "can", "will", "just",
+    "not", "only", "well", "down", "over", "into", "after", "through", "during", "before"
 ])
 
 def generate_svg_wordcloud(titles, num_words=50):
@@ -21,9 +25,10 @@ def generate_svg_wordcloud(titles, num_words=50):
         return '<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg"><text x="400" y="200" font-family="Arial" font-size="20" text-anchor="middle">Aucune donnée disponible</text></svg>'
 
     text = " ".join(titles).lower()
-    words = re.findall(r'\b[a-zàâçéèêëîïôûùüÿñæœ]{2,}\b', text)
-    filtered_words = [w for w in words if w not in STOP_WORDS]
+    words = re.findall(r'[a-zàâçéèêëîïôûùüÿñæœ]{4,}', text)
+    filtered_words = [w.strip() for w in words if w.strip() not in STOP_WORDS and len(w.strip()) > 3]
     word_counts = Counter(filtered_words).most_common(num_words)
+
     
     if not word_counts:
         return '<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg"><text x="400" y="200" font-family="Arial" font-size="20" text-anchor="middle">Nuage de mots vide</text></svg>'

@@ -5,7 +5,8 @@ from db import articles_collection
 
 NAMESPACES = {
     'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9',
-    'news': 'http://www.google.com/schemas/sitemap-news/0.9'
+    'news': 'http://www.google.com/schemas/sitemap-news/0.9',
+    'image': 'http://www.google.com/schemas/sitemap-image/1.1'
 }
 
 def fetch_and_parse_sitemap(source_url, source_name):
@@ -28,6 +29,11 @@ def fetch_and_parse_sitemap(source_url, source_name):
             link = loc_node.text
             
             news_node = url_node.find('news:news', NAMESPACES) or url_node.find('{http://www.google.com/schemas/sitemap-news/0.9}news')
+            image_node = url_node.find('image:image/image:loc', NAMESPACES)
+            image_url = image_node.text if image_node is not None else None
+
+            if not image_url:
+                image_url = "https://via.placeholder.com/150?text=News"
             
             if news_node is not None:
                 title_node = news_node.find('news:title', NAMESPACES) or news_node.find('{http://www.google.com/schemas/sitemap-news/0.9}title')
@@ -51,6 +57,7 @@ def fetch_and_parse_sitemap(source_url, source_name):
                     "link": link,
                     "pub_date": pub_date,
                     "source": source_name,
+                    "image_url": image_url,
                     "keywords": keywords,
                     "consultation_dates": []
                 }
