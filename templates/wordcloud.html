@@ -2,7 +2,7 @@
 <h2>Générateur de Nuage de mots</h2>
 
 <form method="POST" action="{{ url_for('wordcloud') }}">
-  <div style="display: flex; gap: 20px">
+  <div class="container_words">
     <div style="flex: 1">
       <label for="days">Intervalle de temps (derniers jours) :</label>
       <input
@@ -28,7 +28,7 @@
     </div>
 
 
-    <div style="flex: 1">
+    <div class="source" style="flex: 1">
       <label for="source">Source d'actualité :</label>
       <select name="source" id="source" style="width: 100%; padding: 5px;">
     <option value="all" {% if selected_source == 'all' %}selected{% endif %}>Toutes les sources</option>
@@ -37,7 +37,7 @@
           {{ s.journal_name }}
       </option>
     {% endfor %}
-</select>
+    </select>
     </div>
 
     

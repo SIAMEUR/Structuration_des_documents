@@ -7,7 +7,7 @@ body {
 }
 
 header {
-    background-color: #2c3e50;
+    background-color: #2980B9;
     color: white;
     padding: 1.5rem 2rem;
     text-align: center;
@@ -24,12 +24,12 @@ header nav a {
     margin: 0 10px;
     font-weight: bold;
     padding: 5px 10px;
-    border-radius: 4px;
+    border-radius: 15px;
     transition: background 0.3s;
 }
 
 header nav a:hover {
-    background-color: #34495e;
+    background-color: #75a0cb;
 }
 
 main {
@@ -76,10 +76,10 @@ h2:first-child {
 }
 
 form {
-    background: #fdfdfd;
-    border: 1px solid #eee;
+    background: white;
+    border: 1px solid #dddcdc;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 5px;
     margin-bottom: 30px;
 }
 
@@ -90,14 +90,30 @@ form label {
     color: #555;
 }
 
-input[type="text"], input[type="url"], input[type="number"] {
+.container_words{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+input, option, select {
     padding: 10px;
-    width: calc(100% - 22px);
+    width: 80%;
     margin-bottom: 15px;
     border: 1px solid #bdc3c7;
-    border-radius: 4px;
+    border-radius: 15px;
     font-size: 1rem;
 }
+
+select{
+    height: 42px;
+}
+
+.source{
+    margin-top: 20px;
+}
+
 
 button {
     background: #3585ed;
@@ -279,7 +295,7 @@ footer {
 }
 
 .journal-header {
-    background-color: #ffffff;
+    background-color: white;
     color: rgb(77, 137, 233);
     padding: 15px;
     text-align: center;
@@ -305,5 +321,5 @@ img {
     height: 80px;        
     border-radius: 6px;  
     object-fit: cover;   
-    display: block;
+    display: inline-block;
 }

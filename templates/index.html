@@ -3,9 +3,10 @@
 <h2>Consultation des articles</h2>
 
 <form method="GET" action="{{ url_for('index') }}" class="search-bar">
-    <input type="text" name="q" placeholder="Rechercher par titre, journal ou mot-clé..." value="{{ query|default('') }}">
+    <input type="text" name="q" placeholder="Rechercher l'article par titre, journal ou mot-clé..." value="{{ query or '' }}">
     <button type="submit">Rechercher</button>
 </form>
+<p style="font-weight: bold; text-align: center;">Ou afficher vos articles consultés :</p>
 <form method="GET" action="{{ url_for('index') }}" class="search-bar">
     <label for="date_clic">Consultés le :</label>
     <input type="date" id="date_clic" name="date_clic" required>
@@ -59,9 +60,8 @@
                                     </a>
                                     
 {% if article.image_url %}
-                <img src="{{ article.image_url }}"">
-            {% else %}
-                <span class="picto">🖼️</span>
+                <img src="{{ article.image_url }}" alt="Image de l'article" >
+            
             {% endif %}                                </div>
 
                                 <div class="article-meta">

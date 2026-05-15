@@ -24,6 +24,7 @@ def generate_svg_wordcloud(titles, num_words=50):
     if not titles:
         return '<svg width="800" height="400" xmlns="http://www.w3.org/2000/svg"><text x="400" y="200" font-family="Arial" font-size="20" text-anchor="middle">Aucune donnée disponible</text></svg>'
 
+    titles =[t for t in titles if isinstance(t, str)]
     text = " ".join(titles).lower()
     words = re.findall(r'[a-zàâçéèêëîïôûùüÿñæœ]{4,}', text)
     filtered_words = [w.strip() for w in words if w.strip() not in STOP_WORDS and len(w.strip()) > 3]
