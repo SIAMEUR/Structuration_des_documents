@@ -120,13 +120,13 @@ def add_source():
                     "journal_name": name,
                     "update_interval": interval
                 })
-                flash(f"Source ajoutée avec succès ! {result['message']}", "success")
+                flash(f"Source ajoutée avec succès {result['message']}", "success")
             else:
                 print("Détails de l'erreur lors du scalping:" , result.get('message'))
                 flash(f"Impossible d'ajouter la source", "error")
         
         except DuplicateKeyError:
-            flash(f"Cette source existe déja","warning")
+            flash(f"Cette source est déja crée","warning")
 
                 
         except Exception as e:

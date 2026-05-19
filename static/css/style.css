@@ -244,41 +244,24 @@ footer {
 }
 
 .alert-error {
-    background-color: #f8d7da;
-    color: red;
+    background-color: rgb(214, 88, 88);
+    color: black;
+        text-align: center;
+
 }
 
-.alert-success {
-    background-color: #d4edda;
-    color: green;
-}
-
-.messages {
-    animation: fadeIn 0.5s;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
 
 .alert-warning {
-    color: #856404;
-    background-color: #fff3cd;
+    color: black;
+    background-color: rgb(214, 201, 88);
+        text-align: center;
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
+.alert-success {
+    background-color: rgb(105, 209, 105);
+    color: black;
+    text-align: center;
+}
 
 .journal-columns-container {
     display: flex;
@@ -287,6 +270,7 @@ footer {
     overflow-x: auto;    
     padding: 20px 0;
 }
+
 
 .journal-column {
     flex: 0 0 300px;    
